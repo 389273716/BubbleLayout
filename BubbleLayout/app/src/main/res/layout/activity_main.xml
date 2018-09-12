@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="18dp"
+    tools:context="com.tc.bubblelayout.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="气泡Group"
+        android:textColor="@color/colorAccent"/>
+
+    <com.tc.bubblelayout.BubbleGroupView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:BubbleGroupView_backgroundColor="@color/colorAccent"
+        app:BubbleGroupView_blank_space_width="7dp"
+        app:BubbleGroupView_rightPop="true"
+        app:BubbleGroupView_roundRadius="8dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="239127498217498712"/>
+
+        <ImageView
+
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pic1"
+            />
+
+    </com.tc.bubblelayout.BubbleGroupView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="气泡语音view"
+        android:textColor="@color/colorAccent"/>
+
+    <com.tc.bubblelayout.BubbleImageView
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="11dp"
+        android:paddingTop="11dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/chat_white_sound_wave_default"
+        app:BubbleImageView_backgroundColor="@color/orange_ff6000"
+        app:BubbleImageView_leftTextPadding="13dp"
+        app:BubbleImageView_rightTextPadding="13dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="气泡Fresco等第三方网络加载View"
+        android:textColor="@color/colorAccent"/>
+
+
+    <com.tc.bubblelayout.BubbleSimpleDraweeView
+        android:id="@+id/sdv_img"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="气泡TextView"
+        android:textColor="@color/colorAccent"/>
+
+
+    <com.tc.bubblelayout.BubbleTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical|left"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="2dp"
+        android:maxWidth="260dp"
+        android:minWidth="55dp"
+        android:paddingBottom="11dp"
+        android:paddingTop="11dp"
+        android:text="在逆周期因子重启之前，离岸市场的人民币流动性也有所收紧。9月以来，隔夜、1周、1个月等期限的离岸人民币Hibor全线走高，1个月Hibor更是刷新2017年6月来新高纪录。"
+        android:textColor="#222222"
+        android:textSize="16sp"
+        app:BubbleTextView_backgroundColor="@color/colorAccent"
+        app:BubbleTextView_leftTextPadding="10dp"
+        app:BubbleTextView_rightTextPadding="10dp"/>
+</LinearLayout>

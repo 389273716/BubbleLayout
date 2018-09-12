@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BubbleTextView">
+        <attr name="BubbleTextView_leftTextPadding"  format="dimension"/>
+        <attr name="BubbleTextView_rightTextPadding"  format="dimension"/>
+        <attr name="BubbleTextView_backgroundColor"  format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="BubbleGroupView">
+        <attr name="BubbleGroupView_roundRadius" format="dimension"/>
+        <attr name="BubbleGroupView_blank_space_width" format="dimension"/>
+        <attr name="BubbleGroupView_leftTextPadding" format="dimension"/>
+        <attr name="BubbleGroupView_rightTextPadding" format="dimension"/>
+        <attr name="BubbleGroupView_backgroundColor" format="color"/>
+        <attr name="BubbleGroupView_rightPop" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="BubbleImageView">
+        <attr name="BubbleImageView_leftTextPadding"  format="dimension"/>
+        <attr name="BubbleImageView_rightTextPadding"  format="dimension"/>
+        <attr name="BubbleImageView_backgroundColor"  format="color"/>
+    </declare-styleable>
+</resources>
