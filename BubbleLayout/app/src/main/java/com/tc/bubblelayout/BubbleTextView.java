@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
-
 /**
  * author：   tc
  * date：      2018/3/14 & 10:04
@@ -22,14 +21,14 @@ import android.util.AttributeSet;
  */
 public class BubbleTextView extends AppCompatTextView {
     private static final String TAG = "BubbleTextView";
-    private Path srcPath = new Path();
+    private Path mSrcPath;
     private int mHeight;
     private int mWidth;
     private RectF mRoundRect;
     /**
      * 上弧线控制点和下弧线控制点
      */
-    private PointF topControl, bottomControl;
+    private PointF mTopControl, mBottomControl;
 
     /**
      * 气泡图形右侧留空区域宽度
@@ -68,21 +67,24 @@ public class BubbleTextView extends AppCompatTextView {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        topControl = new PointF(0, 0);
-        bottomControl = new PointF(0, 0);
-        mRoundRect = new RectF();
-        TypedArray attr = context.obtainStyledAttributes(attrs, R.styleable.BubbleTextView);
-        mLoadingBackColor = attr.getColor(R.styleable.BubbleTextView_BubbleTextView_backgroundColor, getResources()
-                .getColor(R.color.color_ffffff));
-        mLeftTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleTextView_BubbleTextView_leftTextPadding,
-                DensityUtil.dip2px(context, 12));
-        mRightTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleTextView_BubbleTextView_rightTextPadding,
-                DensityUtil.dip2px(context, 12));
-        attr.recycle();
+        TypedArray attr = context.obtainStyledAttributes(attrs, R.styleable.BubbleView);
+        mLoadingBackColor = attr.getColor(R.styleable.BubbleView_BubbleView_backgroundColor, 0);
+        mIsRightPop = attr.getBoolean(R.styleable.BubbleView_BubbleView_rightPop, true);
         //左侧或右侧留出的空余区域
-        mWidthDiff = DensityUtil.dip2px(getContext(), 7);
+        mWidthDiff = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_blank_space_width,
+                DensityUtil.dip2px(getContext(), 7));
         //圆角的半径
-        mRoundRadius = DensityUtil.dip2px(getContext(), 8);
+        mRoundRadius = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_roundRadius,
+                DensityUtil.dip2px(context, 8));
+        mLeftTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_leftTextPadding,
+                DensityUtil.dip2px(context, 0));
+        mRightTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_rightTextPadding,
+                DensityUtil.dip2px(context, 0));
+        attr.recycle();
+        mSrcPath = new Path();
+        mTopControl = new PointF(0, 0);
+        mBottomControl = new PointF(0, 0);
+        mRoundRect = new RectF();
         //默认一个字的时候的间隔
         mDefaultPadding = DensityUtil.dip2px(getContext(), 16);
         mDefaultCornerPadding = DensityUtil.dip2px(getContext(), 3);
@@ -95,16 +97,16 @@ public class BubbleTextView extends AppCompatTextView {
     private void initValues() {
         if (mIsRightPop) {
             //设置犄角的控制横坐标xy
-            topControl.x = mWidth - DensityUtil.dip2px(getContext(), 2);
-            topControl.y = mRoundRadius;
-            bottomControl.x = mWidth - DensityUtil.dip2px(getContext(), 1);
-            bottomControl.y = mRoundRadius + DensityUtil.dip2px(getContext(), 6);
+            mTopControl.x = mWidth - DensityUtil.dip2px(getContext(), 2);
+            mTopControl.y = mRoundRadius;
+            mBottomControl.x = mWidth - DensityUtil.dip2px(getContext(), 1);
+            mBottomControl.y = mRoundRadius + DensityUtil.dip2px(getContext(), 6);
         } else {
             //设置犄角的控制横坐标xy
-            topControl.x = DensityUtil.dip2px(getContext(), 2);
-            topControl.y = mRoundRadius;
-            bottomControl.x = DensityUtil.dip2px(getContext(), 1);
-            bottomControl.y = mRoundRadius + DensityUtil.dip2px(getContext(), 6);
+            mTopControl.x = DensityUtil.dip2px(getContext(), 2);
+            mTopControl.y = mRoundRadius;
+            mBottomControl.x = DensityUtil.dip2px(getContext(), 1);
+            mBottomControl.y = mRoundRadius + DensityUtil.dip2px(getContext(), 6);
         }
 
     }
@@ -115,6 +117,7 @@ public class BubbleTextView extends AppCompatTextView {
         super.onSizeChanged(w, h, oldw, oldh);
         mHeight = h;
         mWidth = w;
+        initValues();
     }
 
     public void judgePadding() {
@@ -131,25 +134,24 @@ public class BubbleTextView extends AppCompatTextView {
     protected void onDraw(Canvas canvas) {
         canvas.setDrawFilter(mPaintFlagsDrawFilter);
 //        LogUtil.i(TAG, getText() + "  getPaddingLeft" + getPaddingLeft() + "  getPaddingRight" + getPaddingRight());
-        initValues();
-        srcPath.reset();
+        mSrcPath.reset();
         if (mIsRightPop) {
             mRoundRect.set(0, 0, mWidth - mWidthDiff, mHeight);
-            srcPath.addRoundRect(mRoundRect, mRoundRadius, mRoundRadius, Path.Direction.CW);
+            mSrcPath.addRoundRect(mRoundRect, mRoundRadius, mRoundRadius, Path.Direction.CW);
             //给path增加右侧的犄角，形成气泡效果
-            srcPath.moveTo(mWidth - mWidthDiff, mRoundRadius);
-            srcPath.quadTo(topControl.x, topControl.y, mWidth, mRoundRadius - mDefaultCornerPadding);
-            srcPath.quadTo(bottomControl.x, bottomControl.y, mWidth - mWidthDiff,
+            mSrcPath.moveTo(mWidth - mWidthDiff, mRoundRadius);
+            mSrcPath.quadTo(mTopControl.x, mTopControl.y, mWidth, mRoundRadius - mDefaultCornerPadding);
+            mSrcPath.quadTo(mBottomControl.x, mBottomControl.y, mWidth - mWidthDiff,
                     mRoundRadius + mWidthDiff);
         } else {
             mRoundRect.set(mWidthDiff, 0, mWidth, mHeight);
-            srcPath.addRoundRect(mRoundRect, mRoundRadius, mRoundRadius, Path.Direction.CW);
+            mSrcPath.addRoundRect(mRoundRect, mRoundRadius, mRoundRadius, Path.Direction.CW);
             //给path增加右侧的犄角，形成气泡效果
-            srcPath.moveTo(mWidthDiff, mRoundRadius);
-            srcPath.quadTo(topControl.x, topControl.y, 0, mRoundRadius - mDefaultCornerPadding);
-            srcPath.quadTo(bottomControl.x, bottomControl.y, mWidthDiff, mRoundRadius + mWidthDiff);
+            mSrcPath.moveTo(mWidthDiff, mRoundRadius);
+            mSrcPath.quadTo(mTopControl.x, mTopControl.y, 0, mRoundRadius - mDefaultCornerPadding);
+            mSrcPath.quadTo(mBottomControl.x, mBottomControl.y, mWidthDiff, mRoundRadius + mWidthDiff);
         }
-        canvas.clipPath(srcPath);
+        canvas.clipPath(mSrcPath);
         if (mLoadingBackColor != 0) {
             canvas.drawColor(mLoadingBackColor);
         }
@@ -166,6 +168,10 @@ public class BubbleTextView extends AppCompatTextView {
     }
 
     public void setLoadingBackColor(int loadingBackColor) {
+        if (loadingBackColor <= 0) {
+            mLoadingBackColor = 0;
+            return;
+        }
         mLoadingBackColor = getResources().getColor(loadingBackColor);
     }
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
@@ -16,7 +15,6 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
-
 
 /**
  * author：   tc
@@ -80,6 +78,21 @@ public class BubbleGroupView extends LinearLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        TypedArray attr = context.obtainStyledAttributes(attrs, R.styleable.BubbleView);
+        mLoadingBackColor = attr.getColor(R.styleable.BubbleView_BubbleView_backgroundColor, 0);
+        mIsRightPop = attr.getBoolean(R.styleable.BubbleView_BubbleView_rightPop, true);
+        //左侧或右侧留出的空余区域
+        mWidthDiff = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_blank_space_width,
+                DensityUtil.dip2px(getContext(), 7));
+        //圆角的半径
+        mRoundRadius = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_roundRadius,
+                DensityUtil.dip2px(context, 8));
+        mLeftTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_leftTextPadding,
+                DensityUtil.dip2px(context, 0));
+        mRightTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_rightTextPadding,
+                DensityUtil.dip2px(context, 0));
+        attr.recycle();
+
         mBubbleCanvas = new Canvas();
         mSrcPath = new Path();
         mCornerPath = new Path();
@@ -94,21 +107,6 @@ public class BubbleGroupView extends LinearLayout {
         bottomControl = new PointF(0, 0);
         mRoundRect = new RectF();
         mPorterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
-
-        TypedArray attr = context.obtainStyledAttributes(attrs, R.styleable.BubbleGroupView);
-        mLoadingBackColor = attr.getColor(R.styleable.BubbleGroupView_BubbleGroupView_backgroundColor, Color.WHITE);
-        mIsRightPop = attr.getBoolean(R.styleable.BubbleGroupView_BubbleGroupView_rightPop, true);
-        //左侧或右侧留出的空余区域
-        mWidthDiff = attr.getDimensionPixelOffset(R.styleable.BubbleGroupView_BubbleGroupView_blank_space_width,
-                DensityUtil.dip2px(getContext(), 7));
-        //圆角的半径
-        mRoundRadius = attr.getDimensionPixelOffset(R.styleable.BubbleGroupView_BubbleGroupView_roundRadius,
-                DensityUtil.dip2px(context, 8));
-        mLeftTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleGroupView_BubbleGroupView_leftTextPadding,
-                DensityUtil.dip2px(context, 0));
-        mRightTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleGroupView_BubbleGroupView_rightTextPadding,
-                DensityUtil.dip2px(context, 0));
-        attr.recycle();
         mPaintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint
                 .FILTER_BITMAP_FLAG);
         setTextPadding(mRightTextPadding, mLeftTextPadding);
@@ -139,11 +137,19 @@ public class BubbleGroupView extends LinearLayout {
     }
 
     public void setLoadingBackColor(int loadingBackColor) {
+        if (loadingBackColor <= 0) {
+            mLoadingBackColor = 0;
+            return;
+        }
         mLoadingBackColor = getResources().getColor(loadingBackColor);
     }
 
 
     public void setBorderColor(int borderColor) {
+        if (borderColor <= 0) {
+            mBorderColor = 0;
+            return;
+        }
         mBorderColor = getResources().getColor(borderColor);
         mBorderPaint.setColor(borderColor);
     }
@@ -213,7 +219,7 @@ public class BubbleGroupView extends LinearLayout {
         mPaint.setXfermode(mPorterDuffXfermode);
         //绘制气泡部分，和 super.onDraw(canvas);绘制的画面利用xfermode做叠加计算
         canvas.drawBitmap(mBubbleBitmap, 0, 0, mPaint);
-        if (mIsShowBorder && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (mIsShowBorder && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mBorderColor != 0) {
             //绘制气泡的四周边框
             canvas.drawPath(mSrcPath, mBorderPaint);
         }
@@ -250,7 +256,7 @@ public class BubbleGroupView extends LinearLayout {
         } else {
             //给path增加右侧的犄角，形成气泡效果
             mCornerPath.moveTo(mWidthDiff, mRoundRadius);
-            mCornerPath.quadTo(topControl.x, topControl.y, 0, mRoundRadius -mDefaultCornerPadding);
+            mCornerPath.quadTo(topControl.x, topControl.y, 0, mRoundRadius - mDefaultCornerPadding);
             mCornerPath.quadTo(bottomControl.x, bottomControl.y, mWidthDiff, mRoundRadius + mWidthDiff);
         }
         mCornerPath.close();

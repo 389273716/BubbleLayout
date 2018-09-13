@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
-
 /**
  * author：   tc
  * date：      2018/3/14 & 10:04
@@ -24,7 +23,6 @@ import android.util.AttributeSet;
  * modify by
  */
 public class BubbleImageView extends AppCompatImageView {
-    private static final String TAG = "BubbleTextView";
     private Path mSrcPath;
     private int mHeight;
     private int mWidth;
@@ -79,6 +77,21 @@ public class BubbleImageView extends AppCompatImageView {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        TypedArray attr = context.obtainStyledAttributes(attrs, R.styleable.BubbleView);
+        mLoadingBackColor = attr.getColor(R.styleable.BubbleView_BubbleView_backgroundColor, 0);
+        mIsRightPop = attr.getBoolean(R.styleable.BubbleView_BubbleView_rightPop, true);
+        //左侧或右侧留出的空余区域
+        mWidthDiff = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_blank_space_width,
+                DensityUtil.dip2px(getContext(), 7));
+        //圆角的半径
+        mRoundRadius = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_roundRadius,
+                DensityUtil.dip2px(context, 8));
+        mLeftTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_leftTextPadding,
+                DensityUtil.dip2px(context, 0));
+        mRightTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_rightTextPadding,
+                DensityUtil.dip2px(context, 0));
+        attr.recycle();
+
         mSrcPath = new Path();
         mBubbleCanvas = new Canvas();
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -86,18 +99,8 @@ public class BubbleImageView extends AppCompatImageView {
         bottomControl = new PointF(0, 0);
         mRoundRect = new RectF();
         mPorterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
-        TypedArray attr = context.obtainStyledAttributes(attrs, R.styleable.BubbleImageView);
-        mLoadingBackColor = attr.getColor(R.styleable.BubbleImageView_BubbleImageView_backgroundColor, getResources()
-                .getColor(R.color.color_ffffff));
-        mLeftTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleImageView_BubbleImageView_leftTextPadding,
-                DensityUtil.dip2px(context, 13));
-        mRightTextPadding = attr.getDimensionPixelOffset(R.styleable.BubbleImageView_BubbleImageView_rightTextPadding,
-                DensityUtil.dip2px(context, 13));
-        attr.recycle();
-        //左侧或右侧留出的空余区域
-        mWidthDiff = DensityUtil.dip2px(getContext(), 8);
-        //圆角的半径
-        mRoundRadius = DensityUtil.dip2px(getContext(), 10);
+
+
         mDefaultPadding = DensityUtil.dip2px(getContext(), 10);
         mDefaultCornerPadding = DensityUtil.dip2px(getContext(), 3);
         mPaintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint
@@ -171,7 +174,7 @@ public class BubbleImageView extends AppCompatImageView {
     }
 
     private void drawBackColor(Canvas canvas) {
-        if (mLoadingBackColor != 0) {
+        if (mLoadingBackColor !=  0) {
             canvas.drawColor(mLoadingBackColor);
         }
     }
@@ -216,6 +219,10 @@ public class BubbleImageView extends AppCompatImageView {
     }
 
     public void setLoadingBackColor(int loadingBackColor) {
+        if (loadingBackColor <= 0) {
+            mLoadingBackColor = 0;
+            return;
+        }
         mLoadingBackColor = getResources().getColor(loadingBackColor);
     }
 

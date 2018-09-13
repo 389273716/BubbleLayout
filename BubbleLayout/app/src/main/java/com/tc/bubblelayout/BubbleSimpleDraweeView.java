@@ -1,6 +1,7 @@
 package com.tc.bubblelayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,7 +25,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
  * modify by
  */
 public class BubbleSimpleDraweeView extends SimpleDraweeView {
-    private Path mSrcPath = new Path();
+    private Path mSrcPath ;
     private int mHeight;
     private int mWidth;
     private Paint mPaint;
@@ -58,21 +59,30 @@ public class BubbleSimpleDraweeView extends SimpleDraweeView {
     private int mDefaultCornerPadding;
 
     public BubbleSimpleDraweeView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public BubbleSimpleDraweeView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public BubbleSimpleDraweeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, @Nullable AttributeSet attrs) {
+        TypedArray attr = context.obtainStyledAttributes(attrs, R.styleable.BubbleView);
+        mLoadingBackColor = attr.getColor(R.styleable.BubbleView_BubbleView_backgroundColor, 0);
+        mIsRightPop = attr.getBoolean(R.styleable.BubbleView_BubbleView_rightPop, true);
+        //左侧或右侧留出的空余区域
+        mWidthDiff = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_blank_space_width,
+                DensityUtil.dip2px(getContext(), 7));
+        //圆角的半径
+        mRoundRadius = attr.getDimensionPixelOffset(R.styleable.BubbleView_BubbleView_roundRadius,
+                DensityUtil.dip2px(context, 8));
+        attr.recycle();
+        mSrcPath = new Path();
         mBubbleCanvas = new Canvas();
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         topControl = new PointF(0, 0);
@@ -81,15 +91,13 @@ public class BubbleSimpleDraweeView extends SimpleDraweeView {
         mPorterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
         mPaintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint
                 .FILTER_BITMAP_FLAG);
+
+
     }
 
 
     private void initValues() {
         mDefaultCornerPadding = DensityUtil.dip2px(getContext(), 3);
-        //左侧或右侧留出的空余区域
-        mWidthDiff = DensityUtil.dip2px(getContext(), 7);
-        //圆角的半径
-        mRoundRadius = DensityUtil.dip2px(getContext(), 8);
         if (mIsRightPop) {
             //设置犄角的控制横坐标xy
             topControl.x = mWidth - DensityUtil.dip2px(getContext(), 2);
@@ -106,6 +114,10 @@ public class BubbleSimpleDraweeView extends SimpleDraweeView {
     }
 
     public void setLoadingBackColor(int loadingBackColor) {
+        if (loadingBackColor <= 0) {
+            mLoadingBackColor = 0;
+            return;
+        }
         mLoadingBackColor = getResources().getColor(loadingBackColor);
     }
 
