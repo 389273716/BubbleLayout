@@ -20,5 +20,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    compile 'com.facebook.fresco:fresco:1.0.0'
+    compile 'com.facebook.fresco:fresco:1.13.0'
 }

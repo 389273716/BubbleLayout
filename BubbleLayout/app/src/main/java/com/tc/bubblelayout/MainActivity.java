@@ -3,6 +3,7 @@ package com.tc.bubblelayout;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
@@ -15,37 +16,146 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+    private int mRightEntranceMode;
+    private final int ENTRANCE_CHAT_LOCATION = 0x001;
+    private final int ENTRANCE_MEDIA = 0x010;
+    private final int ENTRANCE_PHOTO = 0x100;
+    /**
+     * 入口全部需要显示
+     */
+    private final int ENTRANCE_MORE = 0x111;
+    private final int ENTRANCE_NONE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1536753048164&di=83b9c0277f5ca3df0f214becc465527c&imgtype=0&src=http%3A%2F%2Fpic150.nipic.com%2Ffile%2F20171222%2F21540071_162503708000_2.jpg");
+        Uri uri = Uri.parse("https://timgsa.baidu" +
+                ".com/timg?image&quality=80&size=b9999_10000&sec=1536753048164&di=83b9c0277f5ca3df0f214becc465527c" +
+                "&imgtype=0&src=http%3A%2F%2Fpic150.nipic.com%2Ffile%2F20171222%2F21540071_162503708000_2.jpg");
         final SimpleDraweeView sdv2 = findViewById(R.id.sdv_img);
-        loadGIFImg(uri,sdv2);
+//        loadGIFImg(uri,sdv2);
+
         sdv2.post(new Runnable() {
             @Override
             public void run() {
                 FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
-                final BubblePopGroupView bubblePopGroupView = (BubblePopGroupView) LayoutInflater.from(MainActivity.this)
+                final BubblePopGroupView bubblePopGroupView = (BubblePopGroupView) LayoutInflater.from(MainActivity
+                        .this)
                         .inflate(R.layout.include_pop_emoji_bubble, null);
                 bubblePopGroupView.setLoadingBackColor(R.color.chat_emoji_back);
                 bubblePopGroupView.setBorderColor(R.color.chat_emoji_bubble_border);
                 bubblePopGroupView.setShowBorder(true);
-                final RoundCornerSimpleDraweeView sdvPopImg = (RoundCornerSimpleDraweeView) bubblePopGroupView.findViewById(R.id.sdv_pop_img);
+                final RoundCornerSimpleDraweeView sdvPopImg = (RoundCornerSimpleDraweeView) bubblePopGroupView
+                        .findViewById(R.id.sdv_pop_img);
                 sdvPopImg.setLoadingBackColor(R.color.chat_emoji_back);
                 sdvPopImg.setRoundRadius(10);
                 bubblePopGroupView.show(MainActivity.this, sdv2, 161, 161);
-                final Uri uri = Uri.parse("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1538980461934&di=06bc2dc85608f9124869a640b3724332&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20171_31_11%2Fa8debe8737775787542.gif");
+                final Uri uri = Uri.parse("https://timgsa.baidu" +
+                        ".com/timg?image&quality=80&size=b9999_10000&sec=1538980461934&di" +
+                        "=06bc2dc85608f9124869a640b3724332&imgtype=0&src=http%3A%2F%2Fs9.rr.itc" +
+                        ".cn%2Fr%2FwapChange%2F20171_31_11%2Fa8debe8737775787542.gif");
 
                 loadGIFImg(uri, sdvPopImg);
                 bubblePopGroupView.updateView();
             }
         });
 
+        setMode(ENTRANCE_CHAT_LOCATION | ENTRANCE_MEDIA);
+        printcontainModes();
+        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_NONE" + (mRightEntranceMode == ENTRANCE_NONE));
+        setMode(ENTRANCE_PHOTO);
+        printcontainModes();
+        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_MORE" + (mRightEntranceMode == ENTRANCE_MORE));
+
+//        final NumTest numTest = new NumTest();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.i(TAG, "run 1===: " + numTest.i);
+//                numTest.refresh();
+//                Log.i(TAG, "run 1===: " + numTest.i);
+//            }
+//        }).start();
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.i(TAG, "run 2===: " + numTest.i);
+//                numTest.update();
+//                Log.i(TAG, "run 2===: " + numTest.i);
+//            }
+//        }).start();
     }
 
+    public void setMode(int mode) {
+        this.mRightEntranceMode |= mode;
+    }
+
+    public boolean containMode(int mode) {
+        return (this.mRightEntranceMode & mode) != 0;
+    }
+
+    public void clearMode(int mode) {
+        this.mRightEntranceMode &= ~mode;
+    }
+
+    public void resetMode() {
+        this.mRightEntranceMode &= ENTRANCE_NONE;
+    }
+
+    public void printcontainModes() {
+        List<String> list = new ArrayList<>();
+        if (containMode(ENTRANCE_CHAT_LOCATION)) {
+            list.add("ENTRANCE_CHAT_LOCATION");
+        }
+        if (containMode(ENTRANCE_PHOTO)) {
+            list.add("ENTRANCE_PHOTO");
+        }
+        if (containMode(ENTRANCE_MEDIA)) {
+            list.add("ENTRANCE_MEDIA");
+        }
+
+        System.out.println(list);
+    }
+
+
+    static class NumTest {
+        public int i;
+
+        public synchronized void update() {
+            for (int j = 0; j < 10; j++) {
+                try {
+                    Thread.sleep(100);
+                    i = 10;
+                    Log.i(TAG, "j--" + j + "run2: " + i);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "refresh2: ", e);
+                }
+            }
+
+        }
+
+        public void refresh() {
+            synchronized (this) {
+                for (int j = 0; j < 10; j++) {
+                    try {
+                        Thread.sleep(100);
+                        i = 100;
+                        Log.i(TAG, "j--" + j + " run1: " + i);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "refresh1: ", e);
+                    }
+                }
+            }
+        }
+    }
 
     private void loadGIFImg(Uri path, SimpleDraweeView simpleDraweeView) {
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(path)
