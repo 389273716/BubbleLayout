@@ -2,12 +2,12 @@ package com.tc.bubblelayout;
 
 import android.app.Application;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
+import com.tc.bubblelayout.fresco.FrescoUtil;
 
 public class MyApplication extends Application {
     @Override
 	public void onCreate() {
 		super.onCreate();
-		Fresco.initialize(this);
+		FrescoUtil.init(this);
 	}
 }
