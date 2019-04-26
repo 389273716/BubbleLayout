@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.tc.bubblelayout"
           xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <!--危险权限，需要动态申请-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:name=".MyApplication"

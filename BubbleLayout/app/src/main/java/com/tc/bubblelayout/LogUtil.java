@@ -30,6 +30,10 @@ public class LogUtil {
         Log.e(tag, info);
     }
 
+    public static void e(String tag, Throwable throwable) {
+        Log.e(tag, "", throwable);
+    }
+
     public static void e(String tag, String info, Throwable throwable) {
         Log.e(tag, info, throwable);
     }

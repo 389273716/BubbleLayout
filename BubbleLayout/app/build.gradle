@@ -32,6 +32,11 @@ android {
             minifyEnabled true
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
@@ -40,4 +45,7 @@ dependencies {
     compile 'com.facebook.fresco:fresco:1.13.0'
     compile 'com.facebook.fresco:animated-gif:1.13.0'
     compile 'com.facebook.fresco:imagepipeline-okhttp3:1.13.0'
+    implementation 'com.facebook.soloader:soloader:0.6.0'
+    compile 'io.reactivex:rxjava:1.0.14'
+    compile 'io.reactivex:rxandroid:1.0.1'
 }

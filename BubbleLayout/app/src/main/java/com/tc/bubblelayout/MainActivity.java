@@ -36,6 +36,39 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        testLoadSO();
+        testFresco();
+
+//        setMode(ENTRANCE_CHAT_LOCATION | ENTRANCE_MEDIA);
+//        printcontainModes();
+//        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_NONE" + (mRightEntranceMode == ENTRANCE_NONE));
+//        setMode(ENTRANCE_PHOTO);
+//        printcontainModes();
+//        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_MORE" + (mRightEntranceMode == ENTRANCE_MORE));
+
+
+    }
+
+    private void testLoadSO() {
+        SOManager.getInstance().setInitSuccess(true);
+//        //把测试so的文件拷贝到对应目录
+//        SOManager.getInstance().copyAndInitSoFileToSystem(getApplicationContext(), "fresco");
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                LogUtil.i(TAG, "testFresco");
+//                testFresco();
+//            }
+//        });
+
+    }
+
+
+    private void testFresco() {
+        if (!SOManager.getInstance().isInitSuccess()) {
+            LogUtil.d(TAG, "so not init success");
+            return;
+        }
         Uri uri = Uri.parse("https://timgsa.baidu" +
                 ".com/timg?image&quality=80&size=b9999_10000&sec=1536753048164&di=83b9c0277f5ca3df0f214becc465527c" +
                 "&imgtype=0&src=http%3A%2F%2Fpic150.nipic.com%2Ffile%2F20171222%2F21540071_162503708000_2.jpg");
@@ -66,32 +99,6 @@ public class MainActivity extends AppCompatActivity {
                 bubblePopGroupView.updateView();
             }
         });
-
-        setMode(ENTRANCE_CHAT_LOCATION | ENTRANCE_MEDIA);
-        printcontainModes();
-        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_NONE" + (mRightEntranceMode == ENTRANCE_NONE));
-        setMode(ENTRANCE_PHOTO);
-        printcontainModes();
-        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_MORE" + (mRightEntranceMode == ENTRANCE_MORE));
-
-//        final NumTest numTest = new NumTest();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "run 1===: " + numTest.i);
-//                numTest.refresh();
-//                Log.i(TAG, "run 1===: " + numTest.i);
-//            }
-//        }).start();
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "run 2===: " + numTest.i);
-//                numTest.update();
-//                Log.i(TAG, "run 2===: " + numTest.i);
-//            }
-//        }).start();
     }
 
     public void setMode(int mode) {
@@ -155,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
     }
 
     private void loadGIFImg(Uri path, SimpleDraweeView simpleDraweeView) {
