@@ -19,6 +19,8 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Subscriber;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -50,16 +52,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testLoadSO() {
-        SOManager.getInstance().setInitSuccess(true);
-//        //把测试so的文件拷贝到对应目录
-//        SOManager.getInstance().copyAndInitSoFileToSystem(getApplicationContext(), "fresco");
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                LogUtil.i(TAG, "testFresco");
-//                testFresco();
-//            }
-//        });
+//        SOManager.getInstance().setInitSuccess(true);
+        //把测试so的文件拷贝到对应目录
+        SOManager.getInstance().copyAndInitSoFileToSystem(getApplicationContext(), "fresco", new Subscriber() {
+            @Override
+            public void onCompleted() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LogUtil.i(TAG, "testFresco");
+                        testFresco();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                LogUtil.e(TAG, e);
+            }
+
+            @Override
+            public void onNext(Object o) {
+
+            }
+        });
+
 
     }
 

@@ -3,6 +3,10 @@ package com.tc.bubblelayout;
 import android.content.Context;
 import android.os.Environment;
 
+import com.facebook.soloader.DirectorySoSource;
+import com.facebook.soloader.SoLoader;
+import com.facebook.soloader.SysUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,34 +78,27 @@ public class SOManager {
                 String soFilePath = "";
                 try {
                     LogUtil.i(TAG, "copyAndInitSoFileToSystem");
-//        String[] supportedAbis = SysUtil.getSupportedAbis();
+                    String[] supportedAbis = SysUtil.getSupportedAbis();
 
-//        boolean isArm64 = false;
-//        for (String supportedAbi : supportedAbis) {
-//            LogUtil.i(TAG, "supportedAbi:" + supportedAbi);
-//            if ("arm64-v8a".equals(supportedAbi)) {
-//                isArm64 = true;
-//            }
-//        }
-//        if (isArm64) {
-//            fromPath = fromPath + "/arm64-v8a";
-//        } else {
-                    soFilePath = fromPath + "/armeabi-v7a";
-//        }
+                    boolean isArm64 = false;
+                    for (String supportedAbi : supportedAbis) {
+                        LogUtil.i(TAG, "supportedAbi:" + supportedAbi);
+                        if ("arm64-v8a".equals(supportedAbi)) {
+                            isArm64 = true;
+                        }
+                    }
+                    if (isArm64) {
+                        soFilePath = fromPath + "/arm64-v8a";
+                    } else {
+                        soFilePath = fromPath + "/armeabi-v7a";
+                    }
                     File dir = context.getDir(LIBS_DIR_NAME + soModuleName, Context.MODE_PRIVATE);
 //            if (!isLoadSoFile(dir)) {
                     copy(soFilePath, dir.getAbsolutePath());
 //            }
                     TinkerLoadLibrary.installNativeLibraryPath(context.getClassLoader(), dir);
                     LogUtil.i(TAG, "prependSoSource");
-//            SoLoaderShim.setHandler(new SoLoaderShim.Handler() {
-//                @Override
-//                public void loadLibrary(String libraryName) {
-//                    System.load(absolutePath + "/" + libraryName);
-//                    LogUtil.i(TAG, "load libraryName:" + libraryName);
-//                }
-//            });
-//            SoLoader.prependSoSource(new DirectorySoSource(file, 0));
+                    SoLoader.prependSoSource(new DirectorySoSource(dir, 0));
                     mInitSuccess = true;
                     LogUtil.i(TAG, "init so file success.");
                 } catch (Throwable e) {
@@ -132,8 +129,6 @@ public class SOManager {
         }
 
     }
-
-
 
 
     /**

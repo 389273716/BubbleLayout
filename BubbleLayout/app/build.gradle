@@ -12,7 +12,7 @@ android {
     buildTypes {
         debug {
             ndk {
-                abiFilters = ["armeabi-v7a"]
+                abiFilters = ["armeabi"]
             }
 
             // 移除无用的resource文件
@@ -23,7 +23,7 @@ android {
 
         release {
             ndk {
-                abiFilters = ["armeabi-v7a"]
+                abiFilters = ["armeabi"]
             }
 
             // 移除无用的resource文件
