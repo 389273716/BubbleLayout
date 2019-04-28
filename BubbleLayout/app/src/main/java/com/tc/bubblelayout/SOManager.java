@@ -93,9 +93,9 @@ public class SOManager {
                         }
                     }
 //                    if (!isArm32) {
-                        soFilePath = fromPath + "/arm64-v8a";
+//                        soFilePath = fromPath + "/arm64-v8a";
 //                    } else {
-//                        soFilePath = fromPath + "/armeabi-v7a";
+                        soFilePath = fromPath + "/armeabi-v7a";
 //                    }
                     LogUtil.i(TAG, "prependSoSource  soFilePath:" + soFilePath);
                     File dir = context.getDir(LIBS_DIR_NAME + soModuleName, Context.MODE_PRIVATE);
