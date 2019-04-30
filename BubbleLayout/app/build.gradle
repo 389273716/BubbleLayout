@@ -12,7 +12,12 @@ android {
     buildTypes {
         debug {
             ndk {
-                abiFilters = ["armeabi"]
+                abiFilters =
+                        [
+                                "armeabi-v7a",
+                                "arm64-v8a",
+//                                "armeabi"
+                        ]
             }
 
             // 移除无用的resource文件
@@ -23,7 +28,12 @@ android {
 
         release {
             ndk {
-                abiFilters = ["armeabi"]
+                abiFilters =
+                        [
+                                "armeabi-v7a",
+                                "arm64-v8a",
+//                                "armeabi"
+                        ]
             }
 
             // 移除无用的resource文件
@@ -45,7 +55,8 @@ dependencies {
     compile 'com.facebook.fresco:fresco:1.13.0'
     compile 'com.facebook.fresco:animated-gif:1.13.0'
     compile 'com.facebook.fresco:imagepipeline-okhttp3:1.13.0'
-    implementation 'com.facebook.soloader:soloader:0.6.0'
+//    implementation 'com.facebook.soloader:soloader:0.6.0'
+    compile 'com.getkeepsafe.relinker:relinker:1.3.1'
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'io.reactivex:rxandroid:1.0.1'
 }

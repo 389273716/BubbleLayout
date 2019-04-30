@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TinkerLoadLibrary {
-    private static final String TAG = "Tinker.LoadLibrary";
+    private static final String TAG = "TinkerLoadLibrary";
 
     public static synchronized void installNativeLibraryPath(ClassLoader classLoader, File folder)
             throws Throwable {
@@ -92,6 +92,7 @@ public class TinkerLoadLibrary {
             Field nativeLibraryPathElements = ShareReflectUtil.findField(dexPathList, "nativeLibraryPathElements");
             nativeLibraryPathElements.setAccessible(true);
             nativeLibraryPathElements.set(dexPathList, elements);
+            LogUtil.i(TAG, "libDirs:" + libDirs);
         }
     }
 
@@ -115,6 +116,7 @@ public class TinkerLoadLibrary {
             Field nativeLibraryPathElements = ShareReflectUtil.findField(dexPathList, "nativeLibraryPathElements");
             nativeLibraryPathElements.setAccessible(true);
             nativeLibraryPathElements.set(dexPathList, elements);
+            LogUtil.i(TAG, "libDirs:" + libDirs);
         }
     }
 }

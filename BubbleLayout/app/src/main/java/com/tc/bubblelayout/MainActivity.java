@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
@@ -34,12 +35,13 @@ public class MainActivity extends AppCompatActivity {
     private final int ENTRANCE_MORE = 0x111;
     private final int ENTRANCE_NONE = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         testLoadSO();
-        testFresco();
+//        testFresco();
 
 //        setMode(ENTRANCE_CHAT_LOCATION | ENTRANCE_MEDIA);
 //        printcontainModes();
@@ -52,9 +54,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testLoadSO() {
-//        SOManager.getInstance().setInitSuccess(true);
         //把测试so的文件拷贝到对应目录
-        SOManager.getInstance().copyAndInitSoFileToSystem(getApplicationContext(), "fresco", new Subscriber() {
+        SOManager.getInstance().copyAndInitSoFileToSystem(getApplicationContext(), "fresco", new Subscriber<Pair>() {
             @Override
             public void onCompleted() {
                 runOnUiThread(new Runnable() {
@@ -72,7 +73,31 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNext(Object o) {
+            public void onNext(Pair pair) {
+
+            }
+        });
+        SOManager.getInstance().copyAndInitSoFileToSystem(getApplicationContext(), "shortvideo", new Subscriber<Pair>
+                () {
+            @Override
+            public void onCompleted() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LogUtil.i(TAG, "shortvideo");
+                        System.loadLibrary("pldroid_amix");
+//                        ReLinker.loadLibrary(getApplicationContext(),"pldroid_amix");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                LogUtil.e(TAG, e);
+            }
+
+            @Override
+            public void onNext(Pair pair) {
 
             }
         });
@@ -82,10 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void testFresco() {
-        if (!SOManager.getInstance().isInitSuccess()) {
-            LogUtil.d(TAG, "so not init success");
-            return;
-        }
         Uri uri = Uri.parse("https://timgsa.baidu" +
                 ".com/timg?image&quality=80&size=b9999_10000&sec=1536753048164&di=83b9c0277f5ca3df0f214becc465527c" +
                 "&imgtype=0&src=http%3A%2F%2Fpic150.nipic.com%2Ffile%2F20171222%2F21540071_162503708000_2.jpg");

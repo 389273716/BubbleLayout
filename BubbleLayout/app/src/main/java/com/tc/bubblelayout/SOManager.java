@@ -1,16 +1,20 @@
 package com.tc.bubblelayout;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.facebook.soloader.SysUtil;
 
-import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,15 +48,9 @@ public class SOManager {
         return SingleInstance.INSTANCE;
     }
 
-    private boolean mInitSuccess;
-
-    public boolean isInitSuccess() {
-        return mInitSuccess;
-    }
 
     public void setInitSuccess(String moduleName, boolean initSuccess) {
-        mInitSuccess = initSuccess;
-        mInitModuleSOMap.put(moduleName, mInitSuccess);
+        mInitModuleSOMap.put(moduleName, initSuccess);
     }
 
     /**
@@ -83,37 +81,54 @@ public class SOManager {
                 try {
                     LogUtil.i(TAG, "copyAndInitSoFileToSystem");
                     String[] supportedAbis = SysUtil.getSupportedAbis();
+                    LogUtil.i(TAG, "[copySo] Build.CPU_ABI supported api:" + Build.CPU_ABI + " second:" + Build
+                            .CPU_ABI2);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        LogUtil.i(TAG, "[copySo] supported api:" + Arrays.asList(Build.SUPPORTED_64_BIT_ABIS) +
+                                " " + Arrays.asList(Build.SUPPORTED_32_BIT_ABIS));
+                    }
 
-                    boolean isArm32 = false;
+                    boolean isArm64 = false;
                     // TODO: 2019/4/28 这里要从服务器动态获取armeabi 和armeabi-v7a、armabi-v8a等对应文件。测试代码暂时默认获取v7a
                     for (String supportedAbi : supportedAbis) {
                         LogUtil.i(TAG, "supportedAbi:" + supportedAbi);
-                        if ("armeabi-v7a".equals(supportedAbi)) {
-                            isArm32 = true;
+                        if (Build.CPU_ABI.equals(supportedAbi)) {
+                            if ("arm64-v8a".equals(Build.CPU_ABI)) {
+                                isArm64 = true;
+                            }
                         }
                     }
-//                    if (!isArm32) {
-//                        soFilePath = fromPath + "/arm64-v8a";
-//                    } else {
+                    //用来区分abi拷贝记录，识别是否需要进行拷贝当前so文件到内部存储的系统目录里
+                    String abiName;
+                    if (isArm64) {
+                        abiName = "arm64-v8a";
+                        soFilePath = fromPath + "/arm64-v8a";
+                    } else {
+                        abiName = "armeabi-v7a";
                         soFilePath = fromPath + "/armeabi-v7a";
-//                    }
-                    LogUtil.i(TAG, "prependSoSource  soFilePath:" + soFilePath);
-                    File dir = context.getDir(LIBS_DIR_NAME + soModuleName, Context.MODE_PRIVATE);
-                    int result = copy(soFilePath, dir.getAbsolutePath());
+                    }
+                    File newSOLibPath = context.getDir(LIBS_DIR_NAME + soModuleName, Context.MODE_PRIVATE);
+                    LogUtil.i(TAG, "local cache SO lib source path:" + soFilePath + " ,  new SO lib source path:"
+                            + newSOLibPath.getPath());
+                    int result = copySOToSystemDir(soFilePath, newSOLibPath.getAbsolutePath(), context, abiName,
+                            soModuleName);
                     if (result == -1) {
                         setInitSuccess(soModuleName, false);
                         subscriber.onNext(new Pair<>(soModuleName, false));
-                        LogUtil.e(TAG, "init so file fail");
+                        LogUtil.e(TAG, "init SO lib file fail:" + soModuleName);
                         subscriber.onCompleted();
                         return;
                     }
-                    TinkerLoadLibrary.installNativeLibraryPath(context.getClassLoader(), dir);
-
+                    //反射把刚才的SO存放目录添加到SO加载目录列表里
+                    TinkerLoadLibrary.installNativeLibraryPath(context.getClassLoader(), newSOLibPath);
+                    //初始化SO目录完成，可以通知应用层加载对应模块数据
                     setInitSuccess(soModuleName, true);
                     subscriber.onNext(new Pair<>(soModuleName, true));
-                    LogUtil.i(TAG, "init so file success.");
+                    LogUtil.i(TAG, "init SO lib file success:" + soModuleName);
                 } catch (Throwable e) {
-                    LogUtil.e(TAG, "load so file fail", e);
+                    setInitSuccess(soModuleName, false);
+                    subscriber.onNext(new Pair<>(soModuleName, false));
+                    LogUtil.e(TAG, "load SO lib file fail", e);
                     subscriber.onNext(new Pair<>(soModuleName, false));
                 }
 
@@ -145,70 +160,61 @@ public class SOManager {
 
 
     /**
-     * 判断 so 文件是否存在
-     *
-     * @param dir
-     * @return
+     * @param fromPath 指定的下载目录
+     * @param toPath   应用的包路径,最终识别SO文件的目录
      */
-    private static boolean isLoadSoFile(File dir, String soName) {
-        File[] currentFiles;
-        currentFiles = dir.listFiles();
-        boolean hasSoLib = false;
-        if (currentFiles == null) {
-            return false;
-        }
-        for (int i = 0; i < currentFiles.length; i++) {
-            if (currentFiles[i].getName().contains(soName)) {
-                hasSoLib = true;
-            }
-        }
-        return hasSoLib;
-    }
-
-    /**
-     * @param fromFile 指定的下载目录
-     * @param toFile   应用的包路径
-     * @return
-     */
-    private static int copy(String fromFile, String toFile) {
+    private static int copySOToSystemDir(String fromPath, String toPath, Context context, String abiName, String
+            soModuleName) {
         //要复制的文件目录
-        File root = new File(fromFile);
+        File root = new File(fromPath);
         //如同判断SD卡是否存在或者文件是否存在,如果不存在则 return出去
         if (!root.exists()) {
-            LogUtil.e(TAG, "so root file is not exist");
+            LogUtil.e(TAG, "SO root file is not exist,fromPath:" + fromPath);
             return -1;
         }
         //如果存在则获取当前目录下的全部文件 填充数组
         File[] currentFiles = root.listFiles();
 
         //目标目录
-        File targetDir = new File(toFile);
+        File targetDir = new File(toPath);
         //创建目录
         if (!targetDir.exists()) {
             targetDir.mkdirs();
         }
-        LogUtil.i(TAG, "so root files:" + currentFiles.length);
+        LogUtil.i(TAG, String.format(Locale.ENGLISH, "abiName:%s  ,soModuleName:%s  ,SO root files:%d", abiName,
+                soModuleName, currentFiles.length));
         if (currentFiles != null && currentFiles.length > 0) {
             //遍历要复制该目录下的全部文件
             for (File currentFile : currentFiles) {
                 if (currentFile.isDirectory()) {
                     //如果当前项为子目录 进行递归
-                    copy(currentFile.getPath() + "/", toFile + currentFile.getName() + "/");
+                    copySOToSystemDir(currentFile.getPath() + "/", toPath + currentFile.getName() + "/", context,
+                            abiName, soModuleName);
                 } else {
-                    String toPath = toFile + File.separator + currentFile.getName();
+                    String copyFilePath = toPath + File.separator + currentFile.getName();
 
                     // TODO: 2019/4/26 根据版本号进行变更，动态替换
                     //如果当前项为文件则进行文件拷贝
                     if (currentFile.getName().contains(".so")) {
+                        SharedTool instance = SharedTool.getInstance(context);
+                        //上次更新so的时间
+                        long updateSOTime = URegex.convertLong(instance.getString(currentFile.getPath() + abiName));
                         //最终拷贝到系统目录的so文件
-                        File soCopyFile = new File(toPath);
-                        if (soCopyFile.exists() && currentFile.length() == soCopyFile.length() &&
-                                currentFile.lastModified() == soCopyFile.lastModified()) {
-                            LogUtil.w(TAG, "had copy so file:" + currentFile.getName());
+                        File soCopyFile = new File(copyFilePath);
+                        if (soCopyFile.exists() && updateSOTime == currentFile.lastModified()) {
+                            LogUtil.w(TAG, String.format(Locale.ENGLISH, "abiName:%s  ,soModuleName:%s  ,had copy to " +
+                                    "system Dir:%s", abiName, soModuleName, currentFile.getName()));
                         } else {
-                            int result = copySdcardFile(currentFile.getPath(), toPath);
-                            LogUtil.i(TAG, "start copy so file:" + currentFile.getName() + "  command result:" +
-                                    result);
+                            createOrExistsFile(copyFilePath);
+                            boolean copyFileSuccess = copyFile(currentFile.getPath(), copyFilePath);
+                            //记录下修改so的时间
+                            instance.saveString(currentFile.getPath() + abiName, String.valueOf(currentFile
+                                    .lastModified()));
+                            LogUtil.i(TAG, String.format(Locale.ENGLISH, "current SO file time " +
+                                            ":%d  ,record  updateSOTime :%d .start copy to system Dir:%s " +
+                                            " ,copy file command result:%s  , abiName:%s , soModuleName:%s",
+                                    currentFile.lastModified(), updateSOTime, currentFile.getName(), copyFileSuccess,
+                                    abiName, soModuleName));
                         }
 
                     }
@@ -218,59 +224,126 @@ public class SOManager {
         return 0;
     }
 
+    /**
+     * 判断目录是否存在，不存在则判断是否创建成功
+     *
+     * @param file 文件
+     * @return {@code true}: 存在或创建成功<br>{@code false}: 不存在或创建失败
+     */
+    public static boolean createOrExistsDir(File file) {
+        // 如果存在，是目录则返回true，是文件则返回false，不存在则返回是否创建成功
+        return file != null && (file.exists() ? file.isDirectory() : file.mkdirs());
+    }
 
-    //文件拷贝
-    //要复制的目录下的所有非子目录(文件夹)文件拷贝
-    private static int copySdcardFile(String fromFile, String toFile) {
-        FileInputStream fosfrom = null;
-        FileOutputStream fosto = null;
-        ByteArrayOutputStream baos = null;
-        int result = -1;
+    /**
+     * 判断文件是否存在，不存在则判断是否创建成功
+     *
+     * @param file 文件
+     * @return {@code true}: 存在或创建成功<br>{@code false}: 不存在或创建失败
+     */
+    public static boolean createOrExistsFile(File file) {
+        if (file == null) {
+            return false;
+        }
+        // 如果存在，是文件则返回true，是目录则返回false
+        if (file.exists()) {
+            return file.isFile();
+        }
+        if (!createOrExistsDir(file.getParentFile())) {
+            return false;
+        }
         try {
-            fosfrom = new FileInputStream(fromFile);
-            fosto = new FileOutputStream(toFile);
-            baos = new ByteArrayOutputStream();
+            return file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 判断文件是否存在，不存在则判断是否创建成功
+     *
+     * @param filePath 文件路径
+     * @return {@code true}: 存在或创建成功<br>{@code false}: 不存在或创建失败
+     */
+    public static boolean createOrExistsFile(String filePath) {
+        return createOrExistsFile(getFileByPath(filePath));
+    }
+
+    /**
+     * 根据文件路径获取文件
+     *
+     * @param filePath 文件路径
+     * @return 文件
+     */
+    public static File getFileByPath(String filePath) {
+        return TextUtils.isEmpty(filePath) ? null : new File(filePath);
+    }
+
+    /**
+     * 判断文件或者文件夹是否存在
+     *
+     * @param dirPath 文件或文件夹绝对路径
+     * @return
+     */
+    public static boolean isFileExists(String dirPath) {
+        File file = new File(dirPath);
+        return file.exists();
+    }
+
+
+    public static boolean copyFile(String oldPath, String newPath) {
+        if (!isFileExists(oldPath)) {
+            LogUtil.e(TAG, "this file is not exist:" + oldPath);
+            return false;
+        }
+        if (!isFileExists(newPath)) {
+            LogUtil.e(TAG, "this file is not exist:" + newPath);
+            return false;
+        }
+        FileInputStream inputStream = null;
+        FileOutputStream outputStream = null;
+        try {
+            inputStream = new FileInputStream(oldPath);
+            outputStream = new FileOutputStream(newPath);
             byte[] buffer = new byte[1024];
-            int len = -1;
-            while ((len = fosfrom.read(buffer)) != -1) {
-                baos.write(buffer, 0, len);
+            while ((inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, buffer.length);
             }
-            // 从内存到写入到具体文件
-            fosto.write(baos.toByteArray());
-            result = 0;
-        } catch (Exception e) {
-            result = -1;
+            outputStream.flush();
+            return true;
+        } catch (FileNotFoundException e) {
+            LogUtil.e(TAG, e);
+        } catch (IOException e) {
             LogUtil.e(TAG, e);
         } finally {
-            // 关闭文件流
+            closeIO(inputStream, outputStream);
+        }
+        return false;
+    }
 
-            if (baos != null) {
+    /**
+     * 关流操作
+     *
+     * @param closeables
+     */
+    public static void closeIO(Closeable... closeables) {
+        if (closeables != null && closeables.length > 0) {
+            Closeable[] var4 = closeables;
+            int var3 = closeables.length;
+
+            for (int var2 = 0; var2 < var3; ++var2) {
+                Closeable cb = var4[var2];
+
                 try {
-                    baos.close();
-                } catch (IOException e) {
-                    LogUtil.e(TAG, e);
-                }
-            }
-            if (fosfrom != null) {
-                try {
-                    fosfrom.close();
-                } catch (IOException e) {
-                    LogUtil.e(TAG, e);
-                }
-            }
-            if (fosto != null) {
-                try {
-                    fosto.close();
-                } catch (IOException e) {
-                    LogUtil.e(TAG, e);
+                    if (cb != null) {
+                        cb.close();
+                    }
+                } catch (IOException var6) {
+                    LogUtil.e(TAG, var6);
                 }
             }
 
         }
-
-
-        LogUtil.i(TAG, String.format(Locale.ENGLISH, "fromFile %s ,toFile %s, command status:%d", fromFile, toFile,
-                result));
-        return result;
     }
 }
