@@ -16,6 +16,7 @@ import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.facebook.soloader.SysUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        testLoadSO();
+        String[] supportedAbis = SysUtil.getSupportedAbis();
+        for (String supportedAbi : supportedAbis) {
+            LogUtil.i(TAG, "supportedAbi:" + supportedAbi);
+        }
+        LogUtil.d(TAG, "cpu is :" + CpuUtil.getArchType());
+//        testLoadSO();
 //        testFresco();
 
 //        setMode(ENTRANCE_CHAT_LOCATION | ENTRANCE_MEDIA);
