@@ -54,6 +54,7 @@
             android:textColor="@color/colorAccent"/>
 
         <com.tc.bubblelayout.BubbleImageView
+            android:id="@+id/biv_test"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:paddingBottom="11dp"

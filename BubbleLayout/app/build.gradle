@@ -11,13 +11,13 @@ android {
     }
     buildTypes {
         debug {
-            ndk {
-                abiFilters =
+            ndk {  abiFilters =
                         [
                                 "armeabi-v7a",
                                 "arm64-v8a",
 //                                "armeabi"
                         ]
+
             }
 
             // 移除无用的resource文件

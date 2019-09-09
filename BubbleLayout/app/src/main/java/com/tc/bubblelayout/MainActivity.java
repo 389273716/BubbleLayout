@@ -21,7 +21,10 @@ import com.facebook.soloader.SysUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,8 +58,171 @@ public class MainActivity extends AppCompatActivity {
 //        setMode(ENTRANCE_PHOTO);
 //        printcontainModes();
 //        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_MORE" + (mRightEntranceMode == ENTRANCE_MORE));
+//        testErrorEvent();
+//        testErrorEvent2();
+//        testErrorEvent3();
+    }
+
+    private void testErrorEvent3() {
+
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                subscriber.onNext(1);
+                subscriber.onNext(2);
+                if (true) {
+//                                    subscriber.onError(new Throwable("jjjjjj"));
+//                    throw new NullPointerException("null3333");
+                }
+                subscriber.onNext(3);
+                subscriber.onCompleted();
+            }
+        })
+                .flatMap(new Func1<Integer, Observable<String>>() {
+                    @Override
+                    public Observable<String> call(final Integer o) {
+                        return Observable.create(new Observable.OnSubscribe<String>() {
+                            @Override
+                            public void call(Subscriber<? super String> subscriber) {
+                                if (o.equals(2)) {
+//                                    subscriber.onError(new Throwable("jjjjjj"));
+                                    throw new NullPointerException("null3333");
+                                }
+                                subscriber.onNext("" + o);
+                                subscriber.onCompleted();
+                            }
+                        });
+                    }
+                })
 
 
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "onCompleted: 333");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: ", e);
+                    }
+
+                    @Override
+                    public void onNext(String o) {
+                        Log.i(TAG, "onNext: " + o);
+                    }
+                });
+    }
+
+    private void testErrorEvent() {
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                subscriber.onNext(1);
+                subscriber.onNext(2);
+                subscriber.onNext(3);
+                subscriber.onCompleted();
+            }
+        })
+                .flatMap(new Func1<Integer, Observable<String>>() {
+                    @Override
+                    public Observable<String> call(final Integer o) {
+                        return Observable.create(new Observable.OnSubscribe<String>() {
+                            @Override
+                            public void call(Subscriber<? super String> subscriber) {
+                                if (o.equals(2)) {
+//                                    subscriber.onError(new Throwable("jjjjjj"));
+                                    throw new NullPointerException("null");
+                                }
+                                subscriber.onNext("" + o);
+                                subscriber.onCompleted();
+                            }
+                        }).onErrorResumeNext(new Func1<Throwable, Observable<? extends String>>() {
+                            @Override
+                            public Observable<? extends String> call(Throwable throwable) {
+                                return Observable.create(new Observable.OnSubscribe<String>() {
+                                    @Override
+                                    public void call(Subscriber<? super String> subscriber) {
+                                        subscriber.onNext("on error next event");
+                                        subscriber.onCompleted();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+
+
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "onCompleted: 222");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: ", e);
+                    }
+
+                    @Override
+                    public void onNext(String o) {
+                        Log.i(TAG, "onNext: " + o);
+                    }
+                });
+    }
+
+    private void testErrorEvent2() {
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                subscriber.onNext(1);
+                subscriber.onNext(2);
+                subscriber.onNext(3);
+                subscriber.onCompleted();
+            }
+        })
+                .flatMap(new Func1<Integer, Observable<String>>() {
+                    @Override
+                    public Observable<String> call(final Integer o) {
+                        return Observable.create(new Observable.OnSubscribe<String>() {
+                            @Override
+                            public void call(Subscriber<? super String> subscriber) {
+                                if (o.equals(2)) {
+//                                    subscriber.onError(new Throwable("jjjjjj"));
+                                    throw new NullPointerException("null");
+                                }
+                                subscriber.onNext("" + o);
+                                subscriber.onCompleted();
+                            }
+                        }).onErrorReturn(new Func1<Throwable, String>() {
+                            @Override
+                            public String call(Throwable throwable) {
+                                return throwable.getMessage();
+                            }
+                        });
+                    }
+                })
+
+
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "onCompleted: 222");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: ", e);
+                    }
+
+                    @Override
+                    public void onNext(String o) {
+                        Log.i(TAG, "onNext: " + o);
+                    }
+                });
     }
 
     private void testLoadSO() {

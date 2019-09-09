@@ -146,7 +146,7 @@ public class BubbleTextView extends AppCompatTextView {
         } else {
             mRoundRect.set(mWidthDiff, 0, mWidth, mHeight);
             mSrcPath.addRoundRect(mRoundRect, mRoundRadius, mRoundRadius, Path.Direction.CW);
-            //给path增加右侧的犄角，形成气泡效果
+            //给path增加左侧的犄角，形成气泡效果
             mSrcPath.moveTo(mWidthDiff, mRoundRadius);
             mSrcPath.quadTo(mTopControl.x, mTopControl.y, 0, mRoundRadius - mDefaultCornerPadding);
             mSrcPath.quadTo(mBottomControl.x, mBottomControl.y, mWidthDiff, mRoundRadius + mWidthDiff);

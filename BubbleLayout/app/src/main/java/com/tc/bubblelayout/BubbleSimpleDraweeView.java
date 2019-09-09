@@ -14,6 +14,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -91,7 +92,7 @@ public class BubbleSimpleDraweeView extends SimpleDraweeView {
         mPorterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
         mPaintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint
                 .FILTER_BITMAP_FLAG);
-
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
     }
 
@@ -240,7 +241,7 @@ public class BubbleSimpleDraweeView extends SimpleDraweeView {
             mSrcPath.quadTo(bottomControl.x, bottomControl.y, mWidth - mWidthDiff,
                     mRoundRadius + mWidthDiff);
         } else {
-            //给path增加右侧的犄角，形成气泡效果
+            //给path增加左侧的犄角，形成气泡效果
             mSrcPath.moveTo(mWidthDiff, mRoundRadius);
             mSrcPath.quadTo(topControl.x, topControl.y, 0, mRoundRadius - mDefaultCornerPadding);
             mSrcPath.quadTo(bottomControl.x, bottomControl.y, mWidthDiff, mRoundRadius + mWidthDiff);

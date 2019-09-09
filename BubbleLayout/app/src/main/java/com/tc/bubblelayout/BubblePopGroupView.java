@@ -14,7 +14,6 @@ import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -174,7 +173,7 @@ public class BubblePopGroupView extends FrameLayout {
             mBubbleBitmap.recycle();
         }
         if (mWidth == 0 || mHeight == 0) {
-            Log.w(TAG, "mWidth==0||mHeight==0");
+            LogUtil.w(TAG, "mWidth==0||mHeight==0");
             return;
         }
         mBubbleBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
@@ -292,7 +291,7 @@ public class BubblePopGroupView extends FrameLayout {
         RectF rectF = calcViewScreenLocation(anchor);
         width = DensityUtil.dip2px(getContext(), width);
         height = DensityUtil.dip2px(getContext(), height);
-        LayoutParams layoutParams = new LayoutParams(width, height);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
         int marginTop = (int) (rectF.top - layoutParams.height);
         int marginLeft = (int) (rectF.left - (layoutParams.width - anchor.getWidth()) / 2);
         marginTop = marginTop <= 0 ? 0 : marginTop;

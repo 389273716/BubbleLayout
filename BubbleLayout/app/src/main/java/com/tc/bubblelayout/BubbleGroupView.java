@@ -14,6 +14,7 @@ import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 /**
@@ -102,7 +103,8 @@ public class BubbleGroupView extends LinearLayout {
         mBorderPaint.setStyle(Paint.Style.STROKE);
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setStrokeWidth(0.5f);
-        mBorderPaint.setColor(getResources().getColor(R.color.color_999999));
+        mBorderColor = getResources().getColor(R.color.color_999999);
+        mBorderPaint.setColor(mBorderColor);
         topControl = new PointF(0, 0);
         bottomControl = new PointF(0, 0);
         mRoundRect = new RectF();
@@ -111,6 +113,7 @@ public class BubbleGroupView extends LinearLayout {
                 .FILTER_BITMAP_FLAG);
         setTextPadding(mRightTextPadding, mLeftTextPadding);
         mIsShowBorder = true;
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
 
@@ -219,12 +222,12 @@ public class BubbleGroupView extends LinearLayout {
         mPaint.setXfermode(mPorterDuffXfermode);
         //绘制气泡部分，和 super.onDraw(canvas);绘制的画面利用xfermode做叠加计算
         canvas.drawBitmap(mBubbleBitmap, 0, 0, mPaint);
+        mPaint.setXfermode(null);
+        canvas.restoreToCount(saveCount);
         if (mIsShowBorder && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mBorderColor != 0) {
             //绘制气泡的四周边框
             canvas.drawPath(mSrcPath, mBorderPaint);
         }
-        mPaint.setXfermode(null);
-        canvas.restoreToCount(saveCount);
     }
 
     private void drawBackColor(Canvas canvas) {
@@ -254,7 +257,7 @@ public class BubbleGroupView extends LinearLayout {
             mCornerPath.quadTo(bottomControl.x, bottomControl.y, mWidth - mWidthDiff,
                     mRoundRadius + mWidthDiff);
         } else {
-            //给path增加右侧的犄角，形成气泡效果
+            //给path增加左侧的犄角，形成气泡效果
             mCornerPath.moveTo(mWidthDiff, mRoundRadius);
             mCornerPath.quadTo(topControl.x, topControl.y, 0, mRoundRadius - mDefaultCornerPadding);
             mCornerPath.quadTo(bottomControl.x, bottomControl.y, mWidthDiff, mRoundRadius + mWidthDiff);
