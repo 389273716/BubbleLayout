@@ -7,7 +7,7 @@
     <color name="color_gray_cccccc">#cccccc</color>
     <color name="color_999999">#999999</color>
     <color name="orange_ff6000">#ff6000</color>
-    <color name="color_ffffff">#00ffffff</color>
+    <color name="color_ffffff">#ffffff</color>
     <color name="chat_emoji_back">#e6ffffff</color>
     <color name="chat_emoji_bubble_border">#e6cbcbcb</color>
 </resources>

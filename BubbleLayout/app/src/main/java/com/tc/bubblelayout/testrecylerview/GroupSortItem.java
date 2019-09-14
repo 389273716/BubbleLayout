@@ -7,44 +7,43 @@ package com.tc.bubblelayout.testrecylerview;
  * description
  * modify by
  */
-public class GroupSortItem implements IGroupSort {
-    private int groupIndex;
-    private int groupColorId;
+public abstract class GroupSortItem implements IGroupSort {
+    private String groupType;
+    private int groupBackgroundColorId;
+    private int groupDividerSize;
 
-    public GroupSortItem(int groupIndex, int groupColorId) {
-        this.groupIndex = groupIndex;
-        this.groupColorId = groupColorId;
+    public GroupSortItem(String groupType, int groupBackgroundColorId, int groupDividerSize) {
+        this.groupType = groupType;
+        this.groupBackgroundColorId = groupBackgroundColorId;
+        this.groupDividerSize = groupDividerSize;
     }
 
-    public int getGroupIndex() {
-        return groupIndex;
+
+    public void setGroupType(String groupType) {
+        this.groupType = groupType;
     }
 
-    public void setGroupIndex(int groupIndex) {
-        this.groupIndex = groupIndex;
+    public void setGroupBackgroundColorId(int groupBackgroundColorId) {
+        this.groupBackgroundColorId = groupBackgroundColorId;
     }
 
-    public int getGroupColorId() {
-        return groupColorId;
-    }
-
-    public void setGroupColorId(int groupColorId) {
-        this.groupColorId = groupColorId;
-    }
-
-    @Override
-    public int getGroupSortIndex() {
-        return groupIndex;
+    public void setGroupDividerSize(int groupDividerSize) {
+        this.groupDividerSize = groupDividerSize;
     }
 
     @Override
-    public int getColorId() {
-        return groupColorId;
+    public String getGroupSortType() {
+        return groupType;
     }
 
     @Override
-    public int getGroupDivider() {
-        return 10;
+    public int getGroupBackgroundColorId() {
+        return groupBackgroundColorId;
+    }
+
+    @Override
+    public int getGroupDividerSize() {
+        return groupDividerSize;
     }
 
 }

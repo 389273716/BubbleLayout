@@ -18,9 +18,9 @@ import java.util.List;
  * modify by
  */
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BaseViewHolder> {
-    private List<TestListGroupBean> mList;
+    private List<TestGroupBean> mList;
 
-    public ListAdapter(List<TestListGroupBean> list) {
+    public ListAdapter(List<TestGroupBean> list) {
         mList = list;
     }
 
@@ -33,19 +33,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BaseViewHolder
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         int adapterPosition = holder.getAdapterPosition();
-        TestListGroupBean item = getItem(adapterPosition);
+        TestGroupBean item = getItem(adapterPosition);
         if (item == null) {
             return;
         }
         holder.tv.setText(item.getName());
-//        if (adapterPosition % 2 == 0) {
-//            holder.tv.setBackgroundColor(Color.RED);
-//        } else {
-//            holder.tv.setBackgroundColor(Color.GREEN);
-//        }
     }
 
-    private TestListGroupBean getItem(int pos) {
+    private TestGroupBean getItem(int pos) {
         if (pos <= -1 || pos > getItemCount()) {
             return null;
         }

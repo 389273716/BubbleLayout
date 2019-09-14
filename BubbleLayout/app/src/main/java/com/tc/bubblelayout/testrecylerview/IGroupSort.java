@@ -12,9 +12,19 @@ public interface IGroupSort {
      * 当前数据所在分组索引
      * @return
      */
-    int getGroupSortIndex();
+    String getGroupSortType();
 
-    int getColorId();
+    /**
+     * 获取颜色id，用于
+     * @return
+     */
+    int getGroupBackgroundColorId();
 
-    int getGroupDivider();
+    /**
+     * 获取item上下间距
+     * @return
+     */
+    int getGroupDividerSize();
+
+
 }
