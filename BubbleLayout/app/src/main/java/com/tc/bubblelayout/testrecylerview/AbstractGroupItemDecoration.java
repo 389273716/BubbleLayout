@@ -49,7 +49,7 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
         return mList.size();
     }
 
-    public String getItemGroupIndex(int pos) {
+    public String getItemGroupSortType(int pos) {
         if (mList == null || pos < 0 || pos >= mList.size()) {
             return "-100";
         }
@@ -238,9 +238,9 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
         if (adapterPosition < 0) {
             return null;
         }
-        String lastGroupType = getItemGroupIndex(adapterPosition - 1);
-        String curGroupType = getItemGroupIndex(adapterPosition);
-        String nextGroupType = getItemGroupIndex(adapterPosition + 1);
+        String lastGroupType = getItemGroupSortType(adapterPosition - 1);
+        String curGroupType = getItemGroupSortType(adapterPosition);
+        String nextGroupType = getItemGroupSortType(adapterPosition + 1);
 
         //是否群组中的第一个item
         boolean isTopItem = false;
