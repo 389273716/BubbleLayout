@@ -50,11 +50,14 @@ public class TestListActivity extends AppCompatActivity {
 //                return 0;
 //            }
 //        });
+        final ListAdapter listAdapter = new ListAdapter(this, list);
 
         final NormalDecoration decoration = new NormalDecoration(this, true) {
             @Override
             public String getHeaderName(int pos) {
-
+                if (pos <= -1 || pos >= listAdapter.getItemCount()) {
+                    return "";
+                }
                 return list.get(pos).getGroupSortType();
             }
         };
@@ -62,8 +65,8 @@ public class TestListActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(decoration);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new GroupItemDecoration(this, list,25));
-        recyclerView.setAdapter(new ListAdapter(list));
+        recyclerView.addItemDecoration(new GroupItemDecoration(this, list, 25));
+        recyclerView.setAdapter(listAdapter);
     }
 
 

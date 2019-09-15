@@ -232,6 +232,9 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
      */
     public Pair<Integer, Integer> getItemLayoutType(View child, RecyclerView parent) {
         int adapterPosition = parent.getChildAdapterPosition(child);
+        if (adapterPosition < 0) {
+            return null;
+        }
         String lastGroupType = getItemGroupIndex(adapterPosition - 1);
         String curGroupType = getItemGroupIndex(adapterPosition);
         String nextGroupType = getItemGroupIndex(adapterPosition + 1);
@@ -274,6 +277,9 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
         for (int i = 0, len = parent.getLayoutManager().getChildCount(); i < len; i++) {
             final View child = parent.getChildAt(i);
             Pair<Integer, Integer> pair = getItemLayoutType(child, parent);
+            if (pair == null) {
+                continue;
+            }
             int itemLayoutType = pair.first;
             int adapterPosition = pair.second;
             T item = mList.get(adapterPosition);
@@ -298,6 +304,9 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
         for (int i = 0, len = parent.getLayoutManager().getChildCount(); i < len; i++) {
             final View child = parent.getChildAt(i);
             Pair<Integer, Integer> pair = getItemLayoutType(child, parent);
+            if (pair == null) {
+                continue;
+            }
             int itemLayoutType = pair.first;
             int adapterPosition = pair.second;
             T item = mList.get(adapterPosition);
@@ -319,6 +328,9 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
     @Override
     public void getItemOffsets(Rect outRect, View child, RecyclerView parent, RecyclerView.State state) {
         Pair<Integer, Integer> pair = getItemLayoutType(child, parent);
+        if (pair == null) {
+            return;
+        }
         int itemLayoutType = pair.first;
         int adapterPosition = pair.second;
         T item = mList.get(adapterPosition);

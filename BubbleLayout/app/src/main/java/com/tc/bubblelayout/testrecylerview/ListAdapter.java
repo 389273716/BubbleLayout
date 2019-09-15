@@ -1,10 +1,12 @@
 package com.tc.bubblelayout.testrecylerview;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tc.bubblelayout.R;
 
@@ -19,8 +21,10 @@ import java.util.List;
  */
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BaseViewHolder> {
     private List<TestGroupBean> mList;
+    private Context context;
 
-    public ListAdapter(List<TestGroupBean> list) {
+    public ListAdapter(Context context, List<TestGroupBean> list) {
+        this.context = context;
         mList = list;
     }
 
@@ -38,6 +42,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BaseViewHolder
             return;
         }
         holder.tv.setText(item.getName());
+        holder.tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mList.remove(3);
+                notifyItemRemoved(3);
+                Toast.makeText(context, "delete index:3", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private TestGroupBean getItem(int pos) {
