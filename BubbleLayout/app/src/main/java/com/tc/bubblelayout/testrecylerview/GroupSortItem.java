@@ -4,7 +4,7 @@ package com.tc.bubblelayout.testrecylerview;
  * author：   tc
  * date：      2019/9/12 & 15:52
  * version    1.0
- * description
+ * description 基础类，可以供参看使用，实际使用时只需要集成IGroupSort
  * modify by
  */
 public abstract class GroupSortItem implements IGroupSort {

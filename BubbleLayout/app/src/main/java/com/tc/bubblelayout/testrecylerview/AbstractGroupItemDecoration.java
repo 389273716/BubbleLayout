@@ -14,7 +14,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 /**
- * 根据不同数据类型，实现某一类聚合数据下显示相同展示风格的ItemDecoration类
+ * author：   tc
+ * date：      2019/9/15
+ * version    1.0
+ * description 根据不同数据类型，实现某一类聚合数据下显示相同展示风格的ItemDecoration类
+ * modify by
  */
 public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends RecyclerView.ItemDecoration {
     protected Paint mPaint;

@@ -19,11 +19,11 @@ import java.util.List;
  * description  列表根据不同数据类型，拆分为多个群组进行布局显示的布局间隔绘制类
  * modify by
  */
-public class GroupCornerItemDecoratin extends AbstractGroupItemDecoration {
+public class GroupItemDecoration extends AbstractGroupItemDecoration {
 
     private int mCornerRadius;
 
-    public GroupCornerItemDecoratin(Context context, List list, int cornerRadius) {
+    public GroupItemDecoration(Context context, List list, int cornerRadius) {
         super(context, list);
         this.mCornerRadius = cornerRadius;
     }

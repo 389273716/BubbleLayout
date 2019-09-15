@@ -62,7 +62,7 @@ public class TestListActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(decoration);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new GroupCornerItemDecoratin(this, list,25));
+        recyclerView.addItemDecoration(new GroupItemDecoration(this, list,25));
         recyclerView.setAdapter(new ListAdapter(list));
     }
 
