@@ -28,9 +28,22 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
     @IntDef
     @Retention(RetentionPolicy.SOURCE)
     public @interface ItemLayoutType {
+
+        /**
+         * 该群组只有一个item
+         */
         int SINGLE_ITEM = 1;
+        /**
+         * 该群组有多个item，当前是第一个顶部
+         */
         int TOP_LAYOUT_ITEM = 2;
+        /**
+         * 该群组有多个item，当前是中间item
+         */
         int MIDDLE_LAYOUT_ITEM = 3;
+        /**
+         * 该群组有多个item，当前是第一个底部
+         */
         int BOTTOM_LAYOUT_ITEM = 4;
     }
 
@@ -42,6 +55,11 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
         this.mContext = context;
     }
 
+    /**
+     * 获取数据总数
+     *
+     * @return
+     */
     public int getItemCount() {
         if (mList == null || mList.size() <= 0) {
             return 0;
@@ -49,6 +67,25 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
         return mList.size();
     }
 
+    /**
+     * 根据数据索引位置获取当前item
+     *
+     * @param pos 当前数据索引
+     * @return
+     */
+    public T getItem(int pos) {
+        if (mList == null || mList.size() <= 0) {
+            return null;
+        }
+        return mList.get(pos);
+    }
+
+    /**
+     * 获取当前item所在群组的类型
+     *
+     * @param pos 当前数据索引
+     * @return
+     */
     public String getItemGroupSortType(int pos) {
         if (mList == null || pos < 0 || pos >= mList.size()) {
             return "-100";
@@ -223,7 +260,6 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
      */
     public abstract void getItemOffsetsWhenSingleGroupItem(Rect outRect, View child, RecyclerView parent, RecyclerView
             .State state, int adapterPosition, T item);
-
 
 
     /**
