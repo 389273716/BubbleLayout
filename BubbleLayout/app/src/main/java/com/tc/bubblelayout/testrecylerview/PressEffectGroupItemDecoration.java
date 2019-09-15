@@ -2,9 +2,8 @@ package com.tc.bubblelayout.testrecylerview;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Path;
 import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.drawable.StateListDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -16,30 +15,33 @@ import java.util.List;
  * author：   tc
  * date：     2019/9/14 & 16:29
  * version    1.0
- * description  列表根据不同数据类型，拆分为多个群组进行布局显示的布局间隔绘制类
- * item没有触发反馈
+ * description Item有触摸反馈颜色, 列表根据不同数据类型，拆分为多个群组进行布局显示的布局间隔绘制类
  *
  * @see IGroupSort
+ * <p>
  * modify by
  */
-public class GroupItemDecoration extends AbstractGroupItemDecoration {
+public class PressEffectGroupItemDecoration extends AbstractGroupItemDecoration {
 
     private int mCornerRadius;
 
-    public GroupItemDecoration(Context context, List list, int cornerRadius) {
+
+    public PressEffectGroupItemDecoration(Context context, List list, int cornerRadius) {
         super(context, list);
         this.mCornerRadius = cornerRadius;
     }
 
     private void drawGroupCorner(Canvas canvas, View child, IGroupSort item, float[] corners) {
-        Path srcPath = new Path();
-        RectF rectF = new RectF(child.getLeft(), child.getTop(), child.getRight(), child.getBottom());
-        if (item != null) {
-            mPaint.setColor(mContext.getResources().getColor(item.getGroupBackgroundColorId()));
+        if (item == null) {
+            return;
         }
-        //默认无圆角
-        srcPath.addRoundRect(rectF, corners, Path.Direction.CCW);
-        canvas.drawPath(srcPath, mPaint);
+        StateListDrawable drawable = new StateListDrawable();
+        drawable.addState(new int[]{android.R.attr.state_pressed}, new GroupPressBackgroundDrawable(
+                item.getGroupPressColorId(), corners, child, mContext));
+        //默认状态
+        drawable.addState(new int[]{}, new GroupPressBackgroundDrawable(
+                item.getGroupBackgroundColorId(), corners, child, mContext));
+        child.setBackgroundDrawable(drawable);
     }
 
     @Override
@@ -124,4 +126,5 @@ public class GroupItemDecoration extends AbstractGroupItemDecoration {
         outRect.set(0, DensityUtil.dip2px(mContext, item.getGroupDividerSize()), 0, 0);
 
     }
+
 }

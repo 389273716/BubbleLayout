@@ -292,12 +292,12 @@ public class MainActivity extends AppCompatActivity {
                 final BubblePopGroupView bubblePopGroupView = (BubblePopGroupView) LayoutInflater.from(MainActivity
                         .this)
                         .inflate(R.layout.include_pop_emoji_bubble, null);
-                bubblePopGroupView.setLoadingBackColor(R.color.chat_emoji_back);
-                bubblePopGroupView.setBorderColor(R.color.chat_emoji_bubble_border);
+                bubblePopGroupView.setLoadingBackColor(R.color.color_e6ffffff);
+                bubblePopGroupView.setBorderColor(R.color.color_e6cbcbcb);
                 bubblePopGroupView.setShowBorder(true);
                 final RoundCornerSimpleDraweeView sdvPopImg = (RoundCornerSimpleDraweeView) bubblePopGroupView
                         .findViewById(R.id.sdv_pop_img);
-                sdvPopImg.setLoadingBackColor(R.color.chat_emoji_back);
+                sdvPopImg.setLoadingBackColor(R.color.color_e6ffffff);
                 sdvPopImg.setRoundRadius(10);
                 bubblePopGroupView.show(MainActivity.this, sdv2, 161, 161);
                 final Uri uri = Uri.parse("https://timgsa.baidu" +

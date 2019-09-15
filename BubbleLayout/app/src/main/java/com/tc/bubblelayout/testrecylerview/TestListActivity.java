@@ -42,6 +42,7 @@ public class TestListActivity extends AppCompatActivity {
         //测试群组间的间距为0的情况
         for (TestGroupBean testGroupBean : list) {
             testGroupBean.setGroupDividerSize(0);
+            testGroupBean.setGroupPressColorId(R.color.color_ebebeb);
         }
 //        数据要事先排好序
 //        Collections.sort(list, new Comparator<TestGroupBean>() {
@@ -65,7 +66,7 @@ public class TestListActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(decoration);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new GroupItemDecoration(this, list, 25));
+        recyclerView.addItemDecoration(new PressEffectGroupItemDecoration(this, list, 25));
         recyclerView.setAdapter(listAdapter);
     }
 

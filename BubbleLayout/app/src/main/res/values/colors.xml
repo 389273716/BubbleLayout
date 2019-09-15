@@ -8,6 +8,7 @@
     <color name="color_999999">#999999</color>
     <color name="orange_ff6000">#ff6000</color>
     <color name="color_ffffff">#ffffff</color>
-    <color name="chat_emoji_back">#e6ffffff</color>
-    <color name="chat_emoji_bubble_border">#e6cbcbcb</color>
+    <color name="color_e6ffffff">#e6ffffff</color>
+    <color name="color_e6cbcbcb">#e6cbcbcb</color>
+    <color name="color_ebebeb">#ebebeb</color>
 </resources>

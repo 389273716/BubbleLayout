@@ -37,6 +37,7 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
 
     public AbstractGroupItemDecoration(Context context, List<T> list) {
         this.mPaint = new Paint();
+        mPaint.setAntiAlias(true);
         this.mList = list;
         this.mContext = context;
     }
@@ -223,6 +224,8 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
     public abstract void getItemOffsetsWhenSingleGroupItem(Rect outRect, View child, RecyclerView parent, RecyclerView
             .State state, int adapterPosition, T item);
 
+
+
     /**
      * 根据当前布局中的item view，获取它所属群组中的布局类型（群组只有一个元素，多个元素中（顶部、中间、底部item）这四种类型）
      *
@@ -293,7 +296,6 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
                 onDrawWhenLastGroupItem(canvas, child, parent, state, adapterPosition, item);
             }
 
-
         }
 
     }
@@ -320,7 +322,6 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
                 onDrawOverWhenLastGroupItem(canvas, child, parent, state, adapterPosition, item);
             }
 
-
         }
 
     }
@@ -343,7 +344,6 @@ public abstract class AbstractGroupItemDecoration<T extends IGroupSort> extends 
         } else {
             getItemOffsetsWhenLastGroupItem(outRect, child, parent, state, adapterPosition, item);
         }
-
 
     }
 

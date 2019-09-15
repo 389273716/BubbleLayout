@@ -36,18 +36,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BaseViewHolder
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        int adapterPosition = holder.getAdapterPosition();
+        final int adapterPosition = holder.getAdapterPosition();
         TestGroupBean item = getItem(adapterPosition);
         if (item == null) {
             return;
         }
         holder.tv.setText(item.getName());
-        holder.tv.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mList.remove(3);
-                notifyItemRemoved(3);
-                Toast.makeText(context, "delete index:3", Toast.LENGTH_LONG).show();
+                notifyItemRemoved(adapterPosition);
+                mList.remove(adapterPosition);
+                notifyItemRangeChanged(adapterPosition, mList.size());
+                Toast.makeText(context, "delete index:" + adapterPosition, Toast.LENGTH_LONG).show();
             }
         });
     }

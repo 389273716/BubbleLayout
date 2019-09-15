@@ -60,7 +60,7 @@
             android:paddingBottom="11dp"
             android:paddingTop="11dp"
             android:scaleType="fitStart"
-            android:src="@drawable/chat_white_sound_wave_default"
+            android:src="@drawable/white_sound_wave_default"
             app:BubbleView_backgroundColor="@color/orange_ff6000"
             app:BubbleView_leftTextPadding="13dp"
             app:BubbleView_rightPop="false"

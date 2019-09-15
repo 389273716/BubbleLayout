@@ -10,6 +10,7 @@ package com.tc.bubblelayout.testrecylerview;
 public abstract class GroupSortItem implements IGroupSort {
     private String groupType;
     private int groupBackgroundColorId;
+    private int groupPressColorId;
     private int groupDividerSize;
 
     public GroupSortItem(String groupType, int groupBackgroundColorId, int groupDividerSize) {
@@ -25,6 +26,10 @@ public abstract class GroupSortItem implements IGroupSort {
 
     public void setGroupBackgroundColorId(int groupBackgroundColorId) {
         this.groupBackgroundColorId = groupBackgroundColorId;
+    }
+
+    public void setGroupPressColorId(int groupPressColorId) {
+        this.groupPressColorId = groupPressColorId;
     }
 
     public void setGroupDividerSize(int groupDividerSize) {
@@ -46,4 +51,8 @@ public abstract class GroupSortItem implements IGroupSort {
         return groupDividerSize;
     }
 
+    @Override
+    public int getGroupPressColorId() {
+        return groupPressColorId;
+    }
 }
