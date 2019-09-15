@@ -30,7 +30,7 @@ public interface IGroupSort {
     int getGroupPressColorId();
 
     /**
-     * 获取item上下间距
+     * 获取item上下间距,单位为dp
      *
      * @return
      */

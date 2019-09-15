@@ -18,8 +18,12 @@ public class TestGroupBean extends GroupSortItem {
         this.name = name;
     }
 
-    public TestGroupBean(String name, String groupType, int groupBackgroundColorId, int groupDividerSize) {
-        super(groupType, groupBackgroundColorId, groupDividerSize);
+    public TestGroupBean() {
+    }
+
+    public TestGroupBean(String groupType, int groupBackgroundColorId, int groupDividerSize, int groupPressColorId,
+                         String name) {
+        super(groupType, groupBackgroundColorId, groupDividerSize, groupPressColorId);
         this.name = name;
     }
 

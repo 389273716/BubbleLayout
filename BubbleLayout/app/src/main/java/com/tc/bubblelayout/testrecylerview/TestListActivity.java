@@ -26,23 +26,28 @@ public class TestListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_list);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_list);
         final List<TestGroupBean> list = new ArrayList<>();
+
         for (int i = 0; i < 50; i++) {
             if (i < 4) {
-                list.add(new TestGroupBean(String.valueOf(i), String.valueOf(1), R.color.color_999999, 20));
+                list.add(new TestGroupBean(String.valueOf(1), R.color.color_999999, 20, R.color.color_ebebeb, String
+                        .valueOf(i)));
             } else if (i == 4) {
-                list.add(new TestGroupBean(String.valueOf(i), String.valueOf(2), R.color.orange_ff6000, 15));
+                list.add(new TestGroupBean(String.valueOf(2), R.color.orange_ff6000, 15, R.color.color_ebebeb, String
+                        .valueOf(i)));
             } else if (i == 5) {
-                list.add(new TestGroupBean(String.valueOf(i), String.valueOf(3), R.color.colorAccent, 15));
+                list.add(new TestGroupBean(String.valueOf(3), R.color.colorAccent, 15, R.color.color_ebebeb, String
+                        .valueOf(i)));
             } else if (i < 20) {
-                list.add(new TestGroupBean(String.valueOf(i), String.valueOf(4), R.color.colorPrimaryDark, 10));
+                list.add(new TestGroupBean(String.valueOf(4), R.color.colorPrimaryDark, 10, R.color.color_ebebeb,
+                        String.valueOf(i)));
             } else {
-                list.add(new TestGroupBean(String.valueOf(i), String.valueOf(5), R.color.color_ffffff, 30));
+                list.add(new TestGroupBean(String.valueOf(5), R.color.color_ffffff, 30, R.color.color_ebebeb, String
+                        .valueOf(i)));
             }
         }
         //测试群组间的间距为0的情况
         for (TestGroupBean testGroupBean : list) {
             testGroupBean.setGroupDividerSize(0);
-            testGroupBean.setGroupPressColorId(R.color.color_ebebeb);
         }
 //        数据要事先排好序
 //        Collections.sort(list, new Comparator<TestGroupBean>() {

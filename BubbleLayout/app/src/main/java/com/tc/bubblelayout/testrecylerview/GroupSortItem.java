@@ -13,9 +13,13 @@ public abstract class GroupSortItem implements IGroupSort {
     private int groupPressColorId;
     private int groupDividerSize;
 
-    public GroupSortItem(String groupType, int groupBackgroundColorId, int groupDividerSize) {
+    public GroupSortItem() {
+    }
+
+    public GroupSortItem(String groupType, int groupBackgroundColorId, int groupDividerSize, int groupPressColorId) {
         this.groupType = groupType;
         this.groupBackgroundColorId = groupBackgroundColorId;
+        this.groupPressColorId = groupPressColorId;
         this.groupDividerSize = groupDividerSize;
     }
 
