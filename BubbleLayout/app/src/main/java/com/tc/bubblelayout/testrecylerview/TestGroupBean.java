@@ -1,5 +1,7 @@
 package com.tc.bubblelayout.testrecylerview;
 
+import android.support.annotation.ColorRes;
+
 /**
  * author：   tc
  * date：     2019/9/14 & 16:58
@@ -21,8 +23,8 @@ public class TestGroupBean extends GroupSortItem {
     public TestGroupBean() {
     }
 
-    public TestGroupBean(String groupType, int groupBackgroundColorId, int groupDividerSize, int groupPressColorId,
-                         String name) {
+    public TestGroupBean(String groupType, @ColorRes int groupBackgroundColorId, int groupDividerSize, @ColorRes int
+            groupPressColorId, String name) {
         super(groupType, groupBackgroundColorId, groupDividerSize, groupPressColorId);
         this.name = name;
     }

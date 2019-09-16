@@ -1,5 +1,7 @@
 package com.tc.bubblelayout.testrecylerview;
 
+import android.support.annotation.ColorRes;
+
 /**
  * author：   tc
  * date：      2019/9/12 & 15:52
@@ -28,11 +30,11 @@ public abstract class GroupSortItem implements IGroupSort {
         this.groupType = groupType;
     }
 
-    public void setGroupBackgroundColorId(int groupBackgroundColorId) {
+    public void setGroupBackgroundColorId(@ColorRes int groupBackgroundColorId) {
         this.groupBackgroundColorId = groupBackgroundColorId;
     }
 
-    public void setGroupPressColorId(int groupPressColorId) {
+    public void setGroupPressColorId(@ColorRes int groupPressColorId) {
         this.groupPressColorId = groupPressColorId;
     }
 

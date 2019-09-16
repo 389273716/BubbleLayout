@@ -1,5 +1,7 @@
 package com.tc.bubblelayout.testrecylerview;
 
+import android.support.annotation.ColorRes;
+
 /**
  * author：   tc
  * date：      2019/9/12 & 15:10
@@ -20,6 +22,7 @@ public interface IGroupSort {
      *
      * @return
      */
+    @ColorRes
     int getGroupBackgroundColorId();
 
     /**
@@ -27,6 +30,7 @@ public interface IGroupSort {
      *
      * @return
      */
+    @ColorRes
     int getGroupPressColorId();
 
     /**
