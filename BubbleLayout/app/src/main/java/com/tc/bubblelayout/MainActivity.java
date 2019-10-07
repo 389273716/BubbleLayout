@@ -3,7 +3,6 @@ package com.tc.bubblelayout;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -18,13 +17,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.soloader.SysUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,181 +42,14 @@ public class MainActivity extends AppCompatActivity {
             LogUtil.i(TAG, "supportedAbi:" + supportedAbi);
         }
         LogUtil.d(TAG, "cpu is :" + CpuUtil.getArchType());
+        //测试动态下载so文件，用来研究so文件动态下载拷贝，减轻apk大小，对应的目录文件需要提前拷贝到手机，模拟下载完成后的场景
 //        testLoadSO();
-//        testFresco();
+        testFresco();
 
-//        setMode(ENTRANCE_CHAT_LOCATION | ENTRANCE_MEDIA);
-//        printcontainModes();
-//        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_NONE" + (mRightEntranceMode == ENTRANCE_NONE));
-//        setMode(ENTRANCE_PHOTO);
-//        printcontainModes();
-//        Log.i(TAG, "onCreate: mRightEntranceMode == ENTRANCE_MORE" + (mRightEntranceMode == ENTRANCE_MORE));
-//        testErrorEvent();
-//        testErrorEvent2();
-//        testErrorEvent3();
+
     }
 
-    private void testErrorEvent3() {
 
-        Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                subscriber.onNext(1);
-                subscriber.onNext(2);
-                if (true) {
-//                                    subscriber.onError(new Throwable("jjjjjj"));
-//                    throw new NullPointerException("null3333");
-                }
-                subscriber.onNext(3);
-                subscriber.onCompleted();
-            }
-        })
-                .flatMap(new Func1<Integer, Observable<String>>() {
-                    @Override
-                    public Observable<String> call(final Integer o) {
-                        return Observable.create(new Observable.OnSubscribe<String>() {
-                            @Override
-                            public void call(Subscriber<? super String> subscriber) {
-                                if (o.equals(2)) {
-//                                    subscriber.onError(new Throwable("jjjjjj"));
-                                    throw new NullPointerException("null3333");
-                                }
-                                subscriber.onNext("" + o);
-                                subscriber.onCompleted();
-                            }
-                        });
-                    }
-                })
-
-
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i(TAG, "onCompleted: 333");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: ", e);
-                    }
-
-                    @Override
-                    public void onNext(String o) {
-                        Log.i(TAG, "onNext: " + o);
-                    }
-                });
-    }
-
-    private void testErrorEvent() {
-        Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                subscriber.onNext(1);
-                subscriber.onNext(2);
-                subscriber.onNext(3);
-                subscriber.onCompleted();
-            }
-        })
-                .flatMap(new Func1<Integer, Observable<String>>() {
-                    @Override
-                    public Observable<String> call(final Integer o) {
-                        return Observable.create(new Observable.OnSubscribe<String>() {
-                            @Override
-                            public void call(Subscriber<? super String> subscriber) {
-                                if (o.equals(2)) {
-//                                    subscriber.onError(new Throwable("jjjjjj"));
-                                    throw new NullPointerException("null");
-                                }
-                                subscriber.onNext("" + o);
-                                subscriber.onCompleted();
-                            }
-                        }).onErrorResumeNext(new Func1<Throwable, Observable<? extends String>>() {
-                            @Override
-                            public Observable<? extends String> call(Throwable throwable) {
-                                return Observable.create(new Observable.OnSubscribe<String>() {
-                                    @Override
-                                    public void call(Subscriber<? super String> subscriber) {
-                                        subscriber.onNext("on error next event");
-                                        subscriber.onCompleted();
-                                    }
-                                });
-                            }
-                        });
-                    }
-                })
-
-
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i(TAG, "onCompleted: 222");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: ", e);
-                    }
-
-                    @Override
-                    public void onNext(String o) {
-                        Log.i(TAG, "onNext: " + o);
-                    }
-                });
-    }
-
-    private void testErrorEvent2() {
-        Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                subscriber.onNext(1);
-                subscriber.onNext(2);
-                subscriber.onNext(3);
-                subscriber.onCompleted();
-            }
-        })
-                .flatMap(new Func1<Integer, Observable<String>>() {
-                    @Override
-                    public Observable<String> call(final Integer o) {
-                        return Observable.create(new Observable.OnSubscribe<String>() {
-                            @Override
-                            public void call(Subscriber<? super String> subscriber) {
-                                if (o.equals(2)) {
-//                                    subscriber.onError(new Throwable("jjjjjj"));
-                                    throw new NullPointerException("null");
-                                }
-                                subscriber.onNext("" + o);
-                                subscriber.onCompleted();
-                            }
-                        }).onErrorReturn(new Func1<Throwable, String>() {
-                            @Override
-                            public String call(Throwable throwable) {
-                                return throwable.getMessage();
-                            }
-                        });
-                    }
-                })
-
-
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i(TAG, "onCompleted: 222");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: ", e);
-                    }
-
-                    @Override
-                    public void onNext(String o) {
-                        Log.i(TAG, "onNext: " + o);
-                    }
-                });
-    }
 
     private void testLoadSO() {
         //把测试so的文件拷贝到对应目录
@@ -283,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 ".com/timg?image&quality=80&size=b9999_10000&sec=1536753048164&di=83b9c0277f5ca3df0f214becc465527c" +
                 "&imgtype=0&src=http%3A%2F%2Fpic150.nipic.com%2Ffile%2F20171222%2F21540071_162503708000_2.jpg");
         final SimpleDraweeView sdv2 = findViewById(R.id.sdv_img);
-//        loadGIFImg(uri,sdv2);
+        loadGIFImg(uri,sdv2);
 
         sdv2.post(new Runnable() {
             @Override
@@ -309,70 +135,6 @@ public class MainActivity extends AppCompatActivity {
                 bubblePopGroupView.updateView();
             }
         });
-    }
-
-    public void setMode(int mode) {
-        this.mRightEntranceMode |= mode;
-    }
-
-    public boolean containMode(int mode) {
-        return (this.mRightEntranceMode & mode) != 0;
-    }
-
-    public void clearMode(int mode) {
-        this.mRightEntranceMode &= ~mode;
-    }
-
-    public void resetMode() {
-        this.mRightEntranceMode &= ENTRANCE_NONE;
-    }
-
-    public void printcontainModes() {
-        List<String> list = new ArrayList<>();
-        if (containMode(ENTRANCE_CHAT_LOCATION)) {
-            list.add("ENTRANCE_CHAT_LOCATION");
-        }
-        if (containMode(ENTRANCE_PHOTO)) {
-            list.add("ENTRANCE_PHOTO");
-        }
-        if (containMode(ENTRANCE_MEDIA)) {
-            list.add("ENTRANCE_MEDIA");
-        }
-
-        System.out.println(list);
-    }
-
-
-    static class NumTest {
-        public int i;
-
-        public synchronized void update() {
-            for (int j = 0; j < 10; j++) {
-                try {
-                    Thread.sleep(100);
-                    i = 10;
-                    Log.i(TAG, "j--" + j + "run2: " + i);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "refresh2: ", e);
-                }
-            }
-
-        }
-
-        public void refresh() {
-            synchronized (this) {
-                for (int j = 0; j < 10; j++) {
-                    try {
-                        Thread.sleep(100);
-                        i = 100;
-                        Log.i(TAG, "j--" + j + " run1: " + i);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "refresh1: ", e);
-                    }
-                }
-            }
-        }
-
     }
 
     private void loadGIFImg(Uri path, SimpleDraweeView simpleDraweeView) {
